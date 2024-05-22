@@ -13,12 +13,15 @@
 #
 # currently ONLY supports waveshare 4in2
 #
+# Uthden_Troll: attempting to adapt to 2in13 screen. No changes yet made. 
+#
 
 import time
 import keyboard
 import keymaps
 from PIL import Image, ImageDraw, ImageFont
-from waveshare_epd import new4in2part
+from waveshare_epd import epd2in13
+import traceback
 import textwrap
 import subprocess
 import signal
@@ -28,9 +31,9 @@ from pathlib import Path
 
 # Initialize the e-Paper display
 # clear refreshes whole screen, should be done on slow init()
-epd = new4in2part.EPD()
-epd.init()
-epd.Clear()
+epd = epd2in13.EPD()
+epd.init(epd.lut_partial_update)
+epd.Clear(0xFF)
 
 #Initialize display-related variables)
 display_image = Image.new('1', (epd.width,epd.height), 255)
@@ -38,11 +41,11 @@ display_draw = ImageDraw.Draw(display_image)
 
 #Display settings like font size, spacing, etc.
 display_start_line = 0
-font24 = ImageFont.truetype('Courier Prime.ttf', 18) #24
+font15 = ImageFont.truetype('Courier Prime.ttf', 15) #15
 textWidth=16
-linespacing = 22
-chars_per_line = 32 #28
-lines_on_screen = 12
+linespacing = 20
+chars_per_line = 16 #28
+lines_on_screen = 3
 last_display_update = time.time()
 
 #display related
@@ -113,13 +116,13 @@ def update_display():
     #print(temp)# to debug if you change the font parameters (size, chars per line, etc)
 
     for line in reversed(temp[-lines_on_screen:]):
-       display_draw.text((10, y_position), line[:max_chars_per_line], font=font24, fill=0)
+       display_draw.text((10, y_position), line[:max_chars_per_line], font=font15, fill=0)
        y_position -= linespacing
 
     #Display Console Message
     if console_message != "":
-        display_draw.rectangle((300, 270, 400, 300), fill=255)
-        display_draw.text((300, 270), console_message, font=font24, fill=0)
+        display_draw.rectangle((300, 270, 00, 300), fill=255)
+        display_draw.text((300, 270), console_message, font=font15, fill=0)
         console_message = ""
     
     #generate display buffer for display
@@ -139,13 +142,13 @@ def update_input_area(): #this updates the input area of the typewriter (active 
     global updating_input_area
 
     cursor_index = cursor_position
-    display_draw.rectangle((0, 270, 400, 300), fill=255)  # Clear display
+    display_draw.rectangle((0, 270, 00, 300), fill=255)  # Clear display
     
     #add cursor
     temp_content = input_content[:cursor_index] + "|" + input_content[cursor_index:]
     
     #draw input line text
-    display_draw.text((10, 270), str(temp_content), font=font24, fill=0)
+    display_draw.text((10, 270), str(temp_content), font=font15, fill=0)
     
     #generate display buffer for input line
     updating_input_area = True
@@ -260,7 +263,7 @@ def handle_key_press(e):
     if e.name == "esc" and control_active: #ctrl+esc
         #run powerdown script
         display_draw.rectangle((0, 0, 400, 300), fill=255)  # Clear display
-        display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font24, fill=0)
+        display_draw.text((55, 150), "ZeroWriter Powered Down.", font=font15, fill=0)
         partial_buffer = epd.getbuffer(display_image)
         epd.display(partial_buffer)
         time.sleep(3)
