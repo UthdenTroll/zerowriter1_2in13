@@ -20,7 +20,7 @@ import time
 import keyboard
 import keymaps
 from PIL import Image, ImageDraw, ImageFont
-from waveshare_epd import epd2in13
+from waveshare_epd import epd2in13_V2
 import traceback
 import textwrap
 import subprocess
@@ -31,7 +31,7 @@ from pathlib import Path
 
 # Initialize the e-Paper display
 # clear refreshes whole screen, should be done on slow init()
-epd = epd2in13.EPD()
+epd = epd2in13_V2.EPD()
 epd.init(epd.lut_partial_update)
 epd.Clear(0xFF)
 
