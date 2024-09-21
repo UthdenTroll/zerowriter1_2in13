@@ -36,7 +36,7 @@ epd.init(epd.lut_partial_update)
 epd.Clear(0xFF)
 
 #Initialize display-related variables)
-display_image = Image.new('1', (epd.width,epd.height), 255)
+display_image = Image.new('1', (epd.width,epd.height), 120,255)
 display_draw = ImageDraw.Draw(display_image)
 
 #Display settings like font size, spacing, etc.
